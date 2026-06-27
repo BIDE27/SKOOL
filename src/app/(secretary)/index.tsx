@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
+import { useRouter } from 'expo-router';
 import { LogOut, UserPlus, Users, BookOpen } from 'lucide-react-native';
 
 export default function SecretaryDashboard() {
   const { user, signOut } = useAuth();
+  const router = useRouter();
 
   return (
     <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
@@ -33,7 +35,10 @@ export default function SecretaryDashboard() {
           Ajouter un nouvel élève et l'assigner à une classe.
         </Text>
         
-        <TouchableOpacity className="bg-primary rounded-xl py-4 items-center shadow-[0_0_15px_rgba(176,255,0,0.3)]">
+        <TouchableOpacity 
+          onPress={() => router.push('/(secretary)/register-student')}
+          className="bg-primary rounded-xl py-4 items-center shadow-[0_0_15px_rgba(176,255,0,0.3)]"
+        >
           <Text className="text-background font-bold text-lg">Nouvelle Inscription</Text>
         </TouchableOpacity>
       </View>

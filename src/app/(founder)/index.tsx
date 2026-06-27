@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
+import { useRouter } from 'expo-router';
 import { Users, Wallet, AlertCircle, Calendar, LogOut } from 'lucide-react-native';
 
 export default function FounderDashboard() {
   const { user, signOut } = useAuth();
+  const router = useRouter();
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalIncome: 0,
@@ -116,11 +118,17 @@ export default function FounderDashboard() {
       {/* Quick Actions */}
       <Text className="text-text text-xl font-bold mt-6 mb-4">Actions Rapides</Text>
       <View className="space-y-3">
-        <TouchableOpacity className="bg-surface border border-border p-4 rounded-xl flex-row items-center justify-between">
+        <TouchableOpacity 
+          onPress={() => router.push('/(founder)/personnel')}
+          className="bg-surface border border-border p-4 rounded-xl flex-row items-center justify-between"
+        >
           <Text className="text-text font-semibold">Gérer le Personnel</Text>
           <Text className="text-primary">→</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="bg-surface border border-border p-4 rounded-xl flex-row items-center justify-between">
+        <TouchableOpacity 
+          onPress={() => router.push('/(founder)/finances-reports')}
+          className="bg-surface border border-border p-4 rounded-xl flex-row items-center justify-between"
+        >
           <Text className="text-text font-semibold">Rapports Financiers</Text>
           <Text className="text-primary">→</Text>
         </TouchableOpacity>

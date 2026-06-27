@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
+import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
 import { MapPin, CheckCircle, LogOut, BookOpen, Users } from 'lucide-react-native';
 
@@ -31,6 +32,7 @@ function deg2rad(deg: number) {
 
 export default function TeacherDashboard() {
   const { user, signOut } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [attendanceMarked, setAttendanceMarked] = useState(false);
 
@@ -131,7 +133,10 @@ export default function TeacherDashboard() {
       {/* Menus d'action */}
       <Text className="text-text text-xl font-bold mb-4">Gestion Académique</Text>
       <View className="flex-row flex-wrap justify-between">
-        <TouchableOpacity className="bg-surface w-[48%] p-5 rounded-2xl mb-4 border border-border items-center">
+        <TouchableOpacity 
+          onPress={() => router.push('/(teacher)/students-list')}
+          className="bg-surface w-[48%] p-5 rounded-2xl mb-4 border border-border items-center"
+        >
           <Users size={28} color="#a78bfa" className="mb-3" />
           <Text className="text-text font-bold text-center">Mes Élèves</Text>
         </TouchableOpacity>

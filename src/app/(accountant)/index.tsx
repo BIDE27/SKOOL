@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
-import { LogOut, DollarSign, CheckCircle } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { LogOut, DollarSign, CheckCircle, PlusCircle } from 'lucide-react-native';
 
 export default function AccountantDashboard() {
   const { user, signOut } = useAuth();
+  const router = useRouter();
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,6 +74,14 @@ export default function AccountantDashboard() {
       </View>
 
       <View className="px-6 flex-1">
+        <TouchableOpacity 
+          onPress={() => router.push('/(accountant)/payment-validation')}
+          className="bg-primary rounded-xl py-4 items-center flex-row justify-center mb-6 shadow-[0_0_15px_rgba(176,255,0,0.3)]"
+        >
+          <PlusCircle size={20} color="#000" className="mr-2" />
+          <Text className="text-background font-bold text-lg">Encaisser un Paiement (Espèce)</Text>
+        </TouchableOpacity>
+
         <View className="flex-row items-center mb-4">
           <DollarSign size={20} color="#b0ff00" className="mr-2" />
           <Text className="text-text text-xl font-bold">Historique des Paiements</Text>

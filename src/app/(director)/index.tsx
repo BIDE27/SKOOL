@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
+import { useRouter } from 'expo-router';
 import { LogOut, MessageSquare, AlertCircle, CheckCircle, GraduationCap } from 'lucide-react-native';
 
 export default function DirectorDashboard() {
   const { user, signOut } = useAuth();
+  const router = useRouter();
   const [complaints, setComplaints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -71,7 +73,10 @@ export default function DirectorDashboard() {
 
       <View className="px-6 flex-1">
         {/* Quick Academic Action */}
-        <TouchableOpacity className="bg-primary rounded-xl py-4 items-center flex-row justify-center mb-6 shadow-[0_0_15px_rgba(176,255,0,0.3)]">
+        <TouchableOpacity 
+          onPress={() => router.push('/(director)/academic-monitoring')}
+          className="bg-primary rounded-xl py-4 items-center flex-row justify-center mb-6 shadow-[0_0_15px_rgba(176,255,0,0.3)]"
+        >
           <GraduationCap size={20} color="#000" className="mr-2" />
           <Text className="text-background font-bold text-lg">Suivi Académique Global</Text>
         </TouchableOpacity>
