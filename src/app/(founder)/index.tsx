@@ -5,7 +5,7 @@ import { useAuth } from '../../providers/AuthProvider';
 import { Users, Wallet, AlertCircle, Calendar, LogOut } from 'lucide-react-native';
 
 export default function FounderDashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalIncome: 0,
@@ -67,7 +67,7 @@ export default function FounderDashboard() {
           <Text className="text-text text-2xl font-bold">Vue d'ensemble</Text>
         </View>
         <TouchableOpacity 
-          onPress={() => supabase.auth.signOut()}
+          onPress={signOut}
           className="bg-surface p-3 rounded-full border border-border"
         >
           <LogOut size={20} color="#f8fafc" />

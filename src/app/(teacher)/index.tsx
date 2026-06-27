@@ -30,7 +30,7 @@ function deg2rad(deg: number) {
 }
 
 export default function TeacherDashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
   const [attendanceMarked, setAttendanceMarked] = useState(false);
 
@@ -89,7 +89,7 @@ export default function TeacherDashboard() {
           <Text className="text-primary text-xl font-bold">{user?.user_metadata?.full_name || 'Professeur'}</Text>
         </View>
         <TouchableOpacity 
-          onPress={() => supabase.auth.signOut()}
+          onPress={signOut}
           className="bg-surface p-3 rounded-full border border-border"
         >
           <LogOut size={20} color="#f8fafc" />

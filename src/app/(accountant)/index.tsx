@@ -5,7 +5,7 @@ import { useAuth } from '../../providers/AuthProvider';
 import { LogOut, DollarSign, CheckCircle } from 'lucide-react-native';
 
 export default function AccountantDashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +64,7 @@ export default function AccountantDashboard() {
           <Text className="text-text text-2xl font-bold">Finances</Text>
         </View>
         <TouchableOpacity 
-          onPress={() => supabase.auth.signOut()}
+          onPress={signOut}
           className="bg-surface p-3 rounded-full border border-border"
         >
           <LogOut size={20} color="#f8fafc" />

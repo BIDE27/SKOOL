@@ -5,7 +5,7 @@ import { useAuth } from '../../providers/AuthProvider';
 import { LogOut, MessageSquare, AlertCircle, CheckCircle, GraduationCap } from 'lucide-react-native';
 
 export default function DirectorDashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [complaints, setComplaints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +62,7 @@ export default function DirectorDashboard() {
           <Text className="text-text text-2xl font-bold">Tableau de Bord</Text>
         </View>
         <TouchableOpacity 
-          onPress={() => supabase.auth.signOut()}
+          onPress={signOut}
           className="bg-surface p-3 rounded-full border border-border"
         >
           <LogOut size={20} color="#f8fafc" />

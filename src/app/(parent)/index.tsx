@@ -7,7 +7,7 @@ import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 
 export default function ParentDashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [complaint, setComplaint] = useState('');
   const [loading, setLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -108,7 +108,7 @@ export default function ParentDashboard() {
           <Text className="text-text text-2xl font-bold">Bienvenue</Text>
         </View>
         <TouchableOpacity 
-          onPress={() => supabase.auth.signOut()}
+          onPress={signOut}
           className="bg-surface p-3 rounded-full border border-border"
         >
           <LogOut size={20} color="#f8fafc" />

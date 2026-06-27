@@ -5,7 +5,7 @@ import { useAuth } from '../../providers/AuthProvider';
 import { LogOut, UserPlus, Users, BookOpen } from 'lucide-react-native';
 
 export default function SecretaryDashboard() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   return (
     <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
@@ -16,7 +16,7 @@ export default function SecretaryDashboard() {
           <Text className="text-text text-2xl font-bold">Accueil</Text>
         </View>
         <TouchableOpacity 
-          onPress={() => supabase.auth.signOut()}
+          onPress={signOut}
           className="bg-surface p-3 rounded-full border border-border"
         >
           <LogOut size={20} color="#f8fafc" />
