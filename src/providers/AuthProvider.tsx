@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { Platform } from 'react-native';
 import { useRouter, useSegments } from 'expo-router';
 
 type AuthContextType = {
@@ -114,7 +115,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(null);
       setRole(null);
       setUser(null);
-      router.replace('/');
+      if (Platform.OS === 'web') {
+        window.location.reload();
+      } else {
+        router.replace('/');
+      }
     }
   };
 
