@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Home, User, Plus, X, ArrowRight, DollarSign, Users, GraduationCap, FileText, ClipboardList } from 'lucide-react-native';
 import BeninEduNews from './BeninEduNews';
