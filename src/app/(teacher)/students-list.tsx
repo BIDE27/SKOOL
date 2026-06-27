@@ -66,7 +66,7 @@ export default function StudentsList() {
     <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
       {/* Header */}
       <View className="flex-row items-center mb-8 mt-10">
-        <TouchableOpacity onPress={() => router.back()} className="mr-4 p-2 bg-surface rounded-full border border-border">
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/(teacher)')} className="mr-4 p-2 bg-surface rounded-full border border-border">
           <ArrowLeft size={24} color="#f8fafc" />
         </TouchableOpacity>
         <View>
