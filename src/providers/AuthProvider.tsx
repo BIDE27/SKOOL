@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        fetchUserRole(session.user);
       } else {
         setIsLoading(false);
       }
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          fetchUserRole(session.user.id);
+          fetchUserRole(session.user);
         } else {
           setRole(null);
           setIsLoading(false);
@@ -56,19 +56,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRole = async (userObj: User) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', userId)
-        .single();
-        
-      if (data && !error) {
-        setRole(data.role);
+      if (userObj.user_metadata && userObj.user_metadata.role) {
+        setRole(userObj.user_metadata.role);
+      } else {
+        // Fallback if metadata is missing
+        const { data, error } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', userObj.id)
+          .single();
+          
+        if (data && !error) {
+          setRole(data.role);
+        } else {
+          setRole(null);
+        }
       }
     } catch (e) {
       console.error(e);
+      setRole(null);
     } finally {
       setIsLoading(false);
     }
