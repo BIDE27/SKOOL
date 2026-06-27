@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
 import { useRouter } from 'expo-router';
-import { Users, Wallet, AlertCircle, Calendar, LogOut } from 'lucide-react-native';
+import { Users, Wallet, AlertCircle, Calendar } from 'lucide-react-native';
+import TabLayout from '../../components/TabLayout';
 
 export default function FounderDashboard() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [stats, setStats] = useState({
     totalStudents: 0,
@@ -26,7 +27,7 @@ export default function FounderDashboard() {
         .from('students')
         .select('*', { count: 'exact', head: true });
 
-      // Fetch income (simulated sum, as postgrest doesn't do sum easily without rpc, we fetch and reduce for MVP)
+      // Fetch income
       const { data: finances } = await supabase
         .from('finances')
         .select('amount')
@@ -61,78 +62,50 @@ export default function FounderDashboard() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
-      {/* Header */}
-      <View className="flex-row justify-between items-center mb-8 mt-10">
-        <View>
-          <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Espace Fondé</Text>
-          <Text className="text-text text-2xl font-bold">Vue d'ensemble</Text>
-        </View>
-        <TouchableOpacity 
-          onPress={signOut}
-          className="bg-surface p-3 rounded-full border border-border"
-        >
-          <LogOut size={20} color="#f8fafc" />
-        </TouchableOpacity>
+    <TabLayout role="founder">
+      <View className="px-6 pt-10 pb-4">
+        <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Espace Fondé</Text>
+        <Text className="text-text text-2xl font-bold">Bonjour, {user?.user_metadata?.full_name || 'Fondateur'} 👋</Text>
       </View>
 
       {/* KPI Grid */}
-      <View className="flex-row flex-wrap justify-between">
+      <View className="flex-row flex-wrap justify-between px-6 mb-4">
         {/* Students */}
-        <View className="bg-surface w-[48%] p-5 rounded-2xl mb-4 border border-border">
-          <View className="bg-primary/20 w-10 h-10 rounded-full items-center justify-center mb-4">
-            <Users size={20} color="#b0ff00" />
+        <View className="bg-surface w-[48%] p-4 rounded-2xl mb-4 border border-border">
+          <View className="bg-primary/20 w-8 h-8 rounded-full items-center justify-center mb-3">
+            <Users size={16} color="#b0ff00" />
           </View>
-          <Text className="text-text text-3xl font-bold mb-1">{stats.totalStudents}</Text>
-          <Text className="text-textMuted text-xs uppercase tracking-wider">Élèves</Text>
+          <Text className="text-text text-2xl font-bold mb-1">{stats.totalStudents}</Text>
+          <Text className="text-textMuted text-[10px] uppercase tracking-wider">Élèves</Text>
         </View>
 
         {/* Income */}
-        <View className="bg-surface w-[48%] p-5 rounded-2xl mb-4 border border-border">
-          <View className="bg-primary/20 w-10 h-10 rounded-full items-center justify-center mb-4">
-            <Wallet size={20} color="#b0ff00" />
+        <View className="bg-surface w-[48%] p-4 rounded-2xl mb-4 border border-border">
+          <View className="bg-primary/20 w-8 h-8 rounded-full items-center justify-center mb-3">
+            <Wallet size={16} color="#b0ff00" />
           </View>
-          <Text className="text-text text-2xl font-bold mb-1">{stats.totalIncome.toLocaleString()} F</Text>
-          <Text className="text-textMuted text-xs uppercase tracking-wider">Revenus (CFA)</Text>
+          <Text className="text-text text-xl font-bold mb-1">{stats.totalIncome.toLocaleString()} F</Text>
+          <Text className="text-textMuted text-[10px] uppercase tracking-wider">Revenus (CFA)</Text>
         </View>
 
         {/* Complaints */}
-        <View className="bg-surface w-[48%] p-5 rounded-2xl mb-4 border border-border">
-          <View className="bg-red-500/20 w-10 h-10 rounded-full items-center justify-center mb-4">
-            <AlertCircle size={20} color="#ef4444" />
+        <View className="bg-surface w-[48%] p-4 rounded-2xl mb-4 border border-border">
+          <View className="bg-red-500/20 w-8 h-8 rounded-full items-center justify-center mb-3">
+            <AlertCircle size={16} color="#ef4444" />
           </View>
-          <Text className="text-text text-3xl font-bold mb-1">{stats.openComplaints}</Text>
-          <Text className="text-textMuted text-xs uppercase tracking-wider">Plaintes</Text>
+          <Text className="text-text text-2xl font-bold mb-1">{stats.openComplaints}</Text>
+          <Text className="text-textMuted text-[10px] uppercase tracking-wider">Plaintes</Text>
         </View>
         
-        {/* Attendance Rate (Placeholder) */}
-        <View className="bg-surface w-[48%] p-5 rounded-2xl mb-4 border border-border">
-          <View className="bg-secondary/20 w-10 h-10 rounded-full items-center justify-center mb-4">
-            <Calendar size={20} color="#a78bfa" />
+        {/* Attendance Rate */}
+        <View className="bg-surface w-[48%] p-4 rounded-2xl mb-4 border border-border">
+          <View className="bg-secondary/20 w-8 h-8 rounded-full items-center justify-center mb-3">
+            <Calendar size={16} color="#a78bfa" />
           </View>
-          <Text className="text-text text-3xl font-bold mb-1">98%</Text>
-          <Text className="text-textMuted text-xs uppercase tracking-wider">Présence Globale</Text>
+          <Text className="text-text text-2xl font-bold mb-1">98%</Text>
+          <Text className="text-textMuted text-[10px] uppercase tracking-wider">Présence</Text>
         </View>
       </View>
-
-      {/* Quick Actions */}
-      <Text className="text-text text-xl font-bold mt-6 mb-4">Actions Rapides</Text>
-      <View className="space-y-3">
-        <TouchableOpacity 
-          onPress={() => router.push('/(founder)/personnel')}
-          className="bg-surface border border-border p-4 rounded-xl flex-row items-center justify-between"
-        >
-          <Text className="text-text font-semibold">Gérer le Personnel</Text>
-          <Text className="text-primary">→</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={() => router.push('/(founder)/finances-reports')}
-          className="bg-surface border border-border p-4 rounded-xl flex-row items-center justify-between"
-        >
-          <Text className="text-text font-semibold">Rapports Financiers</Text>
-          <Text className="text-primary">→</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    </TabLayout>
   );
 }

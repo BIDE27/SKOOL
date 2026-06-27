@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
 import { useRouter } from 'expo-router';
-import { LogOut, DollarSign, CheckCircle, PlusCircle } from 'lucide-react-native';
+import { DollarSign, CheckCircle } from 'lucide-react-native';
+import TabLayout from '../../components/TabLayout';
 
 export default function AccountantDashboard() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,32 +60,16 @@ export default function AccountantDashboard() {
   );
 
   return (
-    <View className="flex-1 bg-background">
-      <View className="px-6 pt-10 pb-6 flex-row justify-between items-center">
-        <View>
-          <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Espace Comptable</Text>
-          <Text className="text-text text-2xl font-bold">Finances</Text>
-        </View>
-        <TouchableOpacity 
-          onPress={signOut}
-          className="bg-surface p-3 rounded-full border border-border"
-        >
-          <LogOut size={20} color="#f8fafc" />
-        </TouchableOpacity>
+    <TabLayout role="accountant">
+      <View className="px-6 pt-10 pb-4">
+        <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Espace Comptable</Text>
+        <Text className="text-text text-2xl font-bold">Bonjour, {user?.user_metadata?.full_name || 'Comptable'} 👋</Text>
       </View>
 
-      <View className="px-6 flex-1">
-        <TouchableOpacity 
-          onPress={() => router.push('/(accountant)/payment-validation')}
-          className="bg-primary rounded-xl py-4 items-center flex-row justify-center mb-6 shadow-[0_0_15px_rgba(176,255,0,0.3)]"
-        >
-          <PlusCircle size={20} color="#000" className="mr-2" />
-          <Text className="text-background font-bold text-lg">Encaisser un Paiement (Espèce)</Text>
-        </TouchableOpacity>
-
+      <View className="px-6 flex-1 max-h-[350px] mb-4">
         <View className="flex-row items-center mb-4">
           <DollarSign size={20} color="#b0ff00" className="mr-2" />
-          <Text className="text-text text-xl font-bold">Historique des Paiements</Text>
+          <Text className="text-text text-xl font-bold">Historique Récent</Text>
         </View>
         
         {loading ? (
@@ -92,15 +77,15 @@ export default function AccountantDashboard() {
         ) : payments.length === 0 ? (
           <Text className="text-textMuted text-center mt-10">Aucun paiement enregistré.</Text>
         ) : (
-          <FlatList 
-            data={payments}
-            keyExtractor={item => item.id}
-            renderItem={renderPayment}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 40 }}
-          />
+          <View className="space-y-3">
+            {payments.slice(0, 3).map((item) => (
+              <View key={item.id}>
+                {renderPayment({ item })}
+              </View>
+            ))}
+          </View>
         )}
       </View>
-    </View>
+    </TabLayout>
   );
 }

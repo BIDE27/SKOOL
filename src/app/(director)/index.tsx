@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, ActivityIndicator, FlatList } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
 import { useRouter } from 'expo-router';
-import { LogOut, MessageSquare, AlertCircle, CheckCircle, GraduationCap } from 'lucide-react-native';
+import { MessageSquare, AlertCircle, CheckCircle } from 'lucide-react-native';
+import TabLayout from '../../components/TabLayout';
 
 export default function DirectorDashboard() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const [complaints, setComplaints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,35 +57,18 @@ export default function DirectorDashboard() {
   );
 
   return (
-    <View className="flex-1 bg-background">
+    <TabLayout role="director">
       {/* Header */}
-      <View className="px-6 pt-10 pb-6 flex-row justify-between items-center">
-        <View>
-          <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Direction</Text>
-          <Text className="text-text text-2xl font-bold">Tableau de Bord</Text>
-        </View>
-        <TouchableOpacity 
-          onPress={signOut}
-          className="bg-surface p-3 rounded-full border border-border"
-        >
-          <LogOut size={20} color="#f8fafc" />
-        </TouchableOpacity>
+      <View className="px-6 pt-10 pb-4">
+        <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Direction</Text>
+        <Text className="text-text text-2xl font-bold">Bonjour, {user?.user_metadata?.full_name || 'Directrice'} 👋</Text>
       </View>
 
-      <View className="px-6 flex-1">
-        {/* Quick Academic Action */}
-        <TouchableOpacity 
-          onPress={() => router.push('/(director)/academic-monitoring')}
-          className="bg-primary rounded-xl py-4 items-center flex-row justify-center mb-6 shadow-[0_0_15px_rgba(176,255,0,0.3)]"
-        >
-          <GraduationCap size={20} color="#000" className="mr-2" />
-          <Text className="text-background font-bold text-lg">Suivi Académique Global</Text>
-        </TouchableOpacity>
-
+      <View className="px-6 flex-1 max-h-[350px] mb-4">
         {/* Complaints Section */}
         <View className="flex-row items-center mb-4">
           <MessageSquare size={20} color="#a78bfa" className="mr-2" />
-          <Text className="text-text text-xl font-bold">Plaintes des Parents</Text>
+          <Text className="text-text text-xl font-bold">Plaintes Récentes</Text>
         </View>
 
         {loading ? (
@@ -92,15 +76,15 @@ export default function DirectorDashboard() {
         ) : complaints.length === 0 ? (
           <Text className="text-textMuted text-center mt-10">Aucune plainte à afficher.</Text>
         ) : (
-          <FlatList 
-            data={complaints}
-            keyExtractor={item => item.id}
-            renderItem={renderComplaint}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 40 }}
-          />
+          <View className="space-y-4">
+            {complaints.slice(0, 2).map((item) => (
+              <View key={item.id}>
+                {renderComplaint({ item })}
+              </View>
+            ))}
+          </View>
         )}
       </View>
-    </View>
+    </TabLayout>
   );
 }

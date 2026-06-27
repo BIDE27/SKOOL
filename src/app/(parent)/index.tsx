@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../providers/AuthProvider';
-import { LogOut, CreditCard, MessageSquare, Download } from 'lucide-react-native';
+import { CreditCard, MessageSquare } from 'lucide-react-native';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
+import TabLayout from '../../components/TabLayout';
 
 export default function ParentDashboard() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const [complaint, setComplaint] = useState('');
   const [loading, setLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -37,7 +38,6 @@ export default function ParentDashboard() {
 
   const handleMobileMoneyPayment = async () => {
     setPaymentLoading(true);
-    // Simulation of FedaPay / KkiaPay integration process
     setTimeout(async () => {
       setPaymentLoading(false);
       Alert.alert(
@@ -49,7 +49,6 @@ export default function ParentDashboard() {
         ]
       );
       
-      // Save payment to database
       await supabase.from('payments').insert({
         parent_id: user?.id,
         amount: 25000,
@@ -101,69 +100,66 @@ export default function ParentDashboard() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
-      <View className="flex-row justify-between items-center mb-8 mt-10">
-        <View>
-          <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Espace Parent</Text>
-          <Text className="text-text text-2xl font-bold">Bienvenue</Text>
-        </View>
-        <TouchableOpacity 
-          onPress={signOut}
-          className="bg-surface p-3 rounded-full border border-border"
-        >
-          <LogOut size={20} color="#f8fafc" />
-        </TouchableOpacity>
+    <TabLayout role="parent">
+      {/* Header */}
+      <View className="px-6 pt-10 pb-4">
+        <Text className="text-textMuted text-sm font-semibold uppercase tracking-widest mb-1">Espace Parent</Text>
+        <Text className="text-text text-2xl font-bold">Bonjour, {user?.user_metadata?.full_name || 'Parent'} 👋</Text>
       </View>
 
       {/* Payment Widget */}
-      <View className="bg-surface p-6 rounded-2xl border border-border mb-6 shadow-lg">
-        <View className="flex-row items-center mb-4">
-          <CreditCard size={24} color="#b0ff00" className="mr-3" />
-          <Text className="text-text text-xl font-bold">Paiement Scolarité</Text>
+      <View className="px-6 mb-4">
+        <View className="bg-surface p-5 rounded-2xl border border-border shadow-lg">
+          <View className="flex-row items-center mb-2">
+            <CreditCard size={20} color="#b0ff00" className="mr-2" />
+            <Text className="text-text text-lg font-bold">Paiement Scolarité</Text>
+          </View>
+          <Text className="text-textMuted text-xs mb-4">
+            Payez la contribution par Mobile Money.
+          </Text>
+          <TouchableOpacity 
+            onPress={handleMobileMoneyPayment}
+            disabled={paymentLoading}
+            className="bg-primary rounded-xl py-3 items-center flex-row justify-center shadow-[0_0_15px_rgba(176,255,0,0.3)]"
+          >
+            {paymentLoading ? (
+              <ActivityIndicator color="#000" />
+            ) : (
+              <Text className="text-background font-bold text-sm">Payer 25 000 CFA</Text>
+            )}
+          </TouchableOpacity>
         </View>
-        <Text className="text-textMuted mb-4">
-          Payez facilement la contribution par Mobile Money (MTN, Moov, Celtiis).
-        </Text>
-        <TouchableOpacity 
-          onPress={handleMobileMoneyPayment}
-          disabled={paymentLoading}
-          className="bg-primary rounded-xl py-4 items-center flex-row justify-center shadow-[0_0_15px_rgba(176,255,0,0.3)]"
-        >
-          {paymentLoading ? (
-            <ActivityIndicator color="#000" />
-          ) : (
-            <Text className="text-background font-bold text-lg">Payer 25 000 CFA</Text>
-          )}
-        </TouchableOpacity>
       </View>
 
       {/* Complaints Widget */}
-      <View className="bg-surface p-6 rounded-2xl border border-border mb-6">
-        <View className="flex-row items-center mb-4">
-          <MessageSquare size={24} color="#a78bfa" className="mr-3" />
-          <Text className="text-text text-xl font-bold">Laisser une plainte</Text>
+      <View className="px-6 mb-4">
+        <View className="bg-surface p-5 rounded-2xl border border-border">
+          <View className="flex-row items-center mb-2">
+            <MessageSquare size={20} color="#a78bfa" className="mr-2" />
+            <Text className="text-text text-lg font-bold">Laisser une plainte</Text>
+          </View>
+          <TextInput
+            className="w-full bg-background text-text border border-border rounded-xl px-4 py-2 mb-3 h-16 text-sm"
+            placeholder="Décrivez votre problème à la direction..."
+            placeholderTextColor="#64748b"
+            multiline
+            textAlignVertical="top"
+            value={complaint}
+            onChangeText={setComplaint}
+          />
+          <TouchableOpacity 
+            onPress={handleSubmitComplaint}
+            disabled={loading}
+            className="bg-secondary rounded-xl py-2.5 items-center"
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white font-bold text-sm">Envoyer la plainte</Text>
+            )}
+          </TouchableOpacity>
         </View>
-        <TextInput
-          className="w-full bg-background text-text border border-border rounded-xl px-4 py-3 mb-4 h-24"
-          placeholder="Décrivez votre problème à la direction..."
-          placeholderTextColor="#64748b"
-          multiline
-          textAlignVertical="top"
-          value={complaint}
-          onChangeText={setComplaint}
-        />
-        <TouchableOpacity 
-          onPress={handleSubmitComplaint}
-          disabled={loading}
-          className="bg-secondary rounded-xl py-3 items-center"
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-white font-bold">Envoyer la plainte</Text>
-          )}
-        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </TabLayout>
   );
 }
